@@ -7,6 +7,8 @@ use App\Entity\Conference;
 use App\Form\CommentFormType;
 use App\Repository\CommentRepository;
 use App\Repository\ConferenceRepository;
+use App\SpamChecker;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +20,8 @@ class ConferenceController extends AbstractController
     public function __construct(
         #[Autowire("%kernel.project_dir%/public/uploads/photos")]
         private string $photoDir,
+        private SpamChecker $spamChecker,
+        private EntityManagerInterface $em,
     ) {  
     }
 
@@ -46,7 +50,19 @@ class ConferenceController extends AbstractController
                 $comment->setPhotoFilename($filename);
             }
 
-            $commentRepository->add($comment, true);
+            $this->em->persist($comment);
+
+            $context = [
+                'user_ip' => $request->getClientIp(),
+                'user_agent' => $request->headers->get('user-agent'),
+                'referrer' => $request->headers->get('referer'),
+                'permalink' => $request->getUri(),
+            ];
+            if (2 === $this->spamChecker->getSpamScore($comment, $context)) {
+                throw new \RuntimeException('Blatant spam, go away!');
+            }
+
+            $this->em->flush();
 
             return $this->redirectToRoute('conference', ['slug' => $conference->getSlug()]);
         }
