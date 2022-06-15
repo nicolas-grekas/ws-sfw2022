@@ -51,7 +51,7 @@ class ConferenceController extends AbstractController
                 $comment->setPhotoFilename($filename);
             }
 
-            $commentRepository->add($comment);
+            $commentRepository->add($comment, true);
 
             $this->bus->dispatch(new CommentMessage($comment->getId(), [
                 'user_ip' => $request->getClientIp(),
