@@ -28,7 +28,5 @@ class ConferenceControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h2', 'Amsterdam 2019');
         $this->assertSelectorExists('div:contains("There are 1 comments")');
-
-        $this->assert
     }
 }
