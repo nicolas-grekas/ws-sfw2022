@@ -19,8 +19,11 @@ final class Version20220615090407 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-
+        $this->addSql(<<<'SQL'
+INSERT INTO admin (id, username, roles, password)
+VALUES (nextval('admin_id_seq'), 'admin', '["ROLE_ADMIN"]', '$2y$13$.uXjJ6He.kqzepXdwxL1GuAbvZhoUGlJ1lKa.dmPjpEkSOy1HAOTi')
+SQL
+);
     }
 
     public function down(Schema $schema): void
