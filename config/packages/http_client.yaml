@@ -1,0 +1,7 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    http_client:
+        scoped_clients:
+            akismet.client:
+                base_uri: 'https://%env(AKISMET_KEY)%.rest.akismet.com'
+
