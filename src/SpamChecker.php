@@ -8,8 +8,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SpamChecker
 {
-    private $endpoint;
-
     public function __construct(
         #[Target('akismet.client')]
         private HttpClientInterface $client,
